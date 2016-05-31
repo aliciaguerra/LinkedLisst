@@ -68,3 +68,158 @@ Start with the head and access each node until you reach null. Do not change the
 
                           Node tmp = head;
                           while(tmp!=null) tmp = tmp.next;
+                          
+addLast
+Then method appends the node to the end of the list. This requires traversing but make sure you stop at the last node.
+
+                          public void addLast(AnyType item)
+                          {
+                          if(head==null) addFirst(item);
+                          else
+                          {
+                          Node<AnyType> tmp = head;
+                          while(tmp.next!=null) tmp = tmp.next;
+                          
+                          tmp.next = new Node<AnyType>(item, null);
+                              }
+                          }
+                          
+Inserting "Before"
+Find a node containing key and insert a new node before that node. In that picture, we insert a new node before "a".
+
+For the sake of convenience, we maintain two references prev and curr. When moving along the list, we shift these two references, keeping prev one step before curr. We continue until curr reaches the node before which we need to make an
+insertion. If curr reaches null, we don't insert, otherwise we insert a new node between prev and curr.
+
+                         public void insertBefore(AnyType key, AnyType toInsert){
+                          if(head==null) return null;
+                          if(head.data.equals(key))
+                              addFirst(toInsert);
+                              return;
+                          }
+                          
+                          Node<AnyType> prev = null;
+                          Node<AnyType> curr = head;
+                          while(curr!=null && !cur.data.equals(key)) {
+                          prev=curr;
+                          curr=curr.next;
+                          }
+                          //insert between curr and prev
+                          if(curr!=null) prev.next=new Node<AnyType>(toInsert,curr);
+                          }
+                          
+Deletion
+Find a node containing "key" and delete it. 
+
+The algorithm is similar to insert "before" algorithm. It is convenient to use two references prev and curr. When we move
+along the list these two references, keeping prev one step before curr. We continue until curr reaches the node which we
+need to delete. There are three exceptional cases, we need to take care of:
+1. list is empty
+2. delete the head node
+3. node is not in the list
+
+                       public void remove(AnyType key)
+                       {
+                       if(head==null) throw new Runtime Exception("cannot delete");
+                       
+                       if(head.data.equals(key))
+                       {
+                       head=head.next;
+                       return;
+                       }
+                       
+                       Node<AnyType> curr=head;
+                       Node<AnyType> prev=head;
+                       
+                       while(curr!=null && !curr.data.equals(key)) {
+                       prev=null;
+                       curr=curr.next;
+                       }
+                       
+                       if(curr==null) throw new RuntimeException("cannot delete");
+                       
+                       //delete our node
+                       prev.node=curr.next;
+                       }
+                       
+Iterator
+The whole idea of the iterator is to provide access to a private aggregated data and at the same moment hiding the underlying representation. An iterator in Java is an object, and therefore it's implementation requires creating a class
+that implements the Iterator interface. Usually such class is implemented as a private inner class. The iterator interface
+contains the following methods. 
+
+AnyType next() - returns the next element in the iterator
+boolean hasNext() - checks if there is a next element
+void remove() - removes by element returned by next()
+
+In this section, we implement the Iterator in the LinkedList class. First we add a new method to the LinkedList class:
+
+                     public Iterator<AnyType> iterator()
+                     {
+                     return new LinkedListIterator();
+                     }
+                     
+Here, LinkedListIterator is a private class inside the LinkedList class
+
+                     private class LinkedListIterator implements Iterator<AnyType>
+                     {
+                     private Node<AnyType> nextNode;
+                     public LinkedListIterator(){
+                       nextNode=head;
+                       }
+                       ...
+                    }
+                    
+The LinkedListIterator class must provide implementations for next() and hasNext() methods. Here is the next() method
+
+                     public AnyType next() {
+                      if(!hasNext()) throw new NoSuchElementException();
+                      AnyType res = nextNode.data;
+                      nextNode = nextNode.next;
+                      return res;
+                      }
+                      
+Cloning
+
+Like for any other objects, we need to learn how to clone linked lists. If we simply use the clone() method from the Object
+class, we will get the following structure called a "shallow" copy:
+
+The Object's clone() will create the copy of the first node and share the rest.   
+
+Since out data is immutable it's ok to have shared data between two linked lists. We traverse the original list and copy each node by using the addFirst() method. When this is finished, you will have a new list in reverse order. Finally,
+we have to reverse the list.
+
+                     public Object copy() {
+                      LinkedList<AnyType> twin = new LinkedList<AnyType>;
+                      Node<AnyType> tmp = head;
+                      while(tmp!=null)
+                      {
+                      twin.addFirst(tmp.data);
+                      tmp=tmp.next;
+                      }
+                      return twin.reverse();
+                      }
+
+A better way invovles using a tail reference for the new list, adding each new node after the last node.
+
+                       public LinkedList<AnyType> copy3() {
+                        if(head==null) return null;
+                        LinkedList<AnyType> twin = new LinkedList<AnyType>();
+                        Node tmp = head;
+                        twin.head = new Node<AnyType>(head.data, null);
+                        Node tmpTwin = twin.head;
+                        
+                        while(tmp.next==null)
+                        {
+                        tmp=tmp.next;
+                        tmpTwin.next=new Node<AnyType> (tmp.data, null);
+                        tmpTwin=tmpTwin.next;
+                        }
+                        return twin;
+                        }
+                        
+Polynomial Algebra
+The biggest integer that we can store in a variable of the type int is 2^31-1 on 32-bit CPU. 
+
+                         int prod=1;
+                         for(int i=1; i<=; 31; i++)
+                         prod*=2;
+                         System.out.println(prod);
